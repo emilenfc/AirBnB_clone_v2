@@ -1,40 +1,42 @@
 #!/usr/bin/python3
-"""Show states and cities by state views"""
-from flask import Flask, render_template, g
-import models
-from models.state import State
+"""Starts a Flask web application.
+
+The application listens on 0.0.0.0, port 5000.
+Routes:
+    /states: HTML page with a list of all State objects.
+    /states/<id>: HTML page displaying the given state with <id>.
+"""
+from models import storage
+from flask import Flask
+from flask import render_template
+
+app = Flask(__name__)
 
 
-app = Flask(__name__, template_folder='templates')
+@app.route("/states", strict_slashes=False)
+def states():
+    """Displays an HTML page with a list of all States.
+
+    States are sorted by name.
+    """
+    states = storage.all("State")
+    return render_template("9-states.html", state=states)
 
 
-@app.route('/states', strict_slashes=False)
-def list_states():
-    """view that lists all of the states"""
-    id = None
-    states = models.storage.all(State).values()
-    return render_template('9-states.html', states=states, id=id)
-
-
-@app.route('/states/<id>', strict_slashes=False)
-def list_state_cities(id=None):
-    """view that lists all cities by their states"""
-    found = False
-    states = models.storage.all(State).values()
-    for state in states:
+@app.route("/states/<id>", strict_slashes=False)
+def states_id(id):
+    """Displays an HTML page with info about <id>, if it exists."""
+    for state in storage.all("State").values():
         if state.id == id:
-            found = True
-            states = [state]
-    if found is False:
-        states = []
-    return render_template('9-states.html', states=states, id=id)
+            return render_template("9-states.html", state=state)
+    return render_template("9-states.html")
 
 
 @app.teardown_appcontext
-def tear_down(error):
-    """remove the current SQLAlchemy Session"""
-    models.storage.close()
+def teardown(exc):
+    """Remove the current SQLAlchemy session."""
+    storage.close()
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0")
