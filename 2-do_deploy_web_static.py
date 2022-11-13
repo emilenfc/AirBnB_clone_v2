@@ -6,27 +6,8 @@ from fabric.api import put
 from fabric.api import run
 
 env.hosts = ["54.237.86.111", "52.72.23.83"]
-<<<<<<< HEAD
 
 
-def do_deploy(archive_path):
-    """Distributes an archive to a web server.
-=======
->>>>>>> 7cac26c16bbbebb7797c6eb26e65beeb95c63ff1
-
-    Args:
-        archive_path (str): The path of the archive to distribute.
-    Returns:
-        If the file doesn't exist at archive_path or an error occurs - False.
-        Otherwise - True.
-    """
-    if os.path.isfile(archive_path) is False:
-        return False
-    file = archive_path.split("/")[-1]
-    name = file.split(".")[0]
-
-<<<<<<< HEAD
-=======
 def do_deploy(archive_path):
     """Distributes an archive to a web server.
     Args:
@@ -40,7 +21,6 @@ def do_deploy(archive_path):
     file = archive_path.split("/")[-1]
     name = file.split(".")[0]
 
->>>>>>> 7cac26c16bbbebb7797c6eb26e65beeb95c63ff1
     if put(archive_path, "/tmp/{}".format(file)).failed is True:
         return False
     if run("rm -rf /data/web_static/releases/{}/".
